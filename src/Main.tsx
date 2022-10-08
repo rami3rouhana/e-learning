@@ -4,12 +4,13 @@ import Admin from './pages/Admin';
 import Professor from './pages/Professor';
 
 const Main = () => {
-return (         
+  return (
     <Routes>
-    <Route path='/student' element={<Students/>} />
-    <Route path='/admin' element={<Admin/>} />
-    <Route path='/professor' element={<Professor/>} />
-  </Routes>
-);
+      <Route path='/' element={<Students />} />
+      <Route path='/student' element={<Students />} />
+      <Route path='/admin' element={<Admin />} />
+      <Route path='/professor' element={<Professor />} />
+    </Routes>
+  );
 }
 export default Main;
