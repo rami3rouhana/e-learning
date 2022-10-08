@@ -1,10 +1,11 @@
 import { Dispatch } from 'react';
 
 export interface GlobalStateInterface {
-  isUserAuthenticated: boolean;
-  loggedUser: string;
-  persistenceType: string;
-  favoriteMovies: []
+  name: string,
+  loggedIn: boolean,
+  role: number,
+  jwt: string,
+  children?: React.ReactNode
 }
 
 export type ActionType = {
@@ -16,7 +17,3 @@ export type ContextType = {
   globalState: GlobalStateInterface;
   dispatch: Dispatch<ActionType>;
 };
-
-export type MovieType ={
-  imdbID:any
-}

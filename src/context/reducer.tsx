@@ -1,4 +1,4 @@
-import { ActionType, GlobalStateInterface, MovieType } from './types';
+import { ActionType, GlobalStateInterface } from './types';
 import { initialState } from './index';
 
 const Reducer = (state: GlobalStateInterface, action: ActionType): any => {
