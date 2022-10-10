@@ -23,20 +23,20 @@ export interface GlobalStateInterface {
 interface GlobalContext {
   user: GlobalStateInterface,
   setUser: Dispatch<SetStateAction<GlobalStateInterface>>
-  getStudents: any,
-  getCourses: any,
-  getInstructors: any,
-  getAssignements: any,
-  getStudentCourses: any,
-  getAnnouncements: any,
-  addStudentCourse: any,
-  addAnouncement: any,
-  createAssignement: any,
-  addAssignement: any,
-  addStudent: any,
-  addInstructor: any,
-  addCourse: any,
-  axiosData: any
+  getStudents: () => Promise<void>,
+  getCourses: () => Promise<void>,
+  getInstructors: () => Promise<void>,
+  getAssignements: () => Promise<void>,
+  getStudentCourses: () => Promise<void>,
+  getAnnouncements: () => Promise<void>,
+  addStudentCourse: (data:object) => Promise<void>,
+  addAnouncement: (data:object) => Promise<void>,
+  createAssignement: (data:object) => Promise<void>,
+  addAssignement: (data:object) => Promise<void>,
+  addStudent: (data:object) => Promise<void>,
+  addInstructor: (data:object) => Promise<void>,
+  addCourse: (data:object) => Promise<void>,
+  axiosData: (data:object) => Promise<void>
 }
 
 export const GlobalStateContext = createContext({} as GlobalContext)
@@ -53,6 +53,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   const [state, dispatch] = useReducer(Reducer, intialeState)
 
   console.log(state);
+
 
   const getStudents = async () => {
     const config = {
