@@ -12,6 +12,7 @@ const onRequestError = (error: AxiosError): Promise<AxiosError> => {
 }
 
 const onResponse = (response: AxiosResponse): AxiosResponse => {
+    if(typeof response.data.jwt !== 'undefined')
     localStorage.setItem("token", response.data.jwt);
     return response;
 }
