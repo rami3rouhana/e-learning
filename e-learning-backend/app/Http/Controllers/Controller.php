@@ -24,7 +24,7 @@ class Controller extends BaseController
         $decoded = JWT::decode($jwtToken, new Key($key, 'HS256'));
 
         if (($decoded->exp) > time()) {
-            return  $decoded->id;
+            return  ["id" => $decoded->id, "role"=>$decoded->role];
         } else {
             return json_encode([
                 "success" => false,
