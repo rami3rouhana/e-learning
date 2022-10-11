@@ -38,7 +38,7 @@ Route::group(["prefix" => "v0.1"], function () {
     });
 
     Route::controller(AssignementController::class)->group(function () {
-        Route::middleware(StudentAuth::class)->group(function(){
+        Route::middleware(StudentAuth::class)->group(function () {
             Route::get('assignements', 'getAssignements');
             Route::post('assignements', 'addAssignement');
         });
@@ -50,9 +50,7 @@ Route::group(["prefix" => "v0.1"], function () {
     });
 
     Route::controller(StudentClassController::class)->group(function () {
-        Route::middleware(AdminAuth::class)->group(function(){
-            Route::get('studentsclass/{id}', 'getStudentsClass');
-            Route::post('studentsclass', 'addStudentsClass');
-        });
+        Route::get('studentsclass/{id?}', 'getStudentsClass')->middleware(StudentAuth::class);
+        Route::post('studentsclass', 'addStudentsClass')->middleware(InstructorAuth::class);;
     });
 });
