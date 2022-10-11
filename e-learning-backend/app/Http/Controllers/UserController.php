@@ -68,9 +68,9 @@ class UserController extends Controller
         $result = User::where('role', '3')->get();
 
         if ($result) {
-            return response()->json(["students" => $result, "jwt" => $this->refresh(), "success" => true], 400);
+            return response()->json(["students" => $result, "jwt" => $this->refresh(), "success" => true], 200);
         } else {
-            return response()->json(["success" => true], 200);
+            return response()->json(["success" => false], 400);
         }
     }
 
@@ -78,9 +78,9 @@ class UserController extends Controller
     {
         $result = User::where('role', '2')->get();
         if ($result) {
-            return response()->json(["instructors" => $result, "jwt" => $this->refresh(), "success" => true], 400);
+            return response()->json(["instructors" => $result, "jwt" => $this->refresh(), "success" => true], 200);
         } else {
-            return response()->json(["success" => true], 200);
+            return response()->json(["success" => false], 400);
         }
     }
 }
