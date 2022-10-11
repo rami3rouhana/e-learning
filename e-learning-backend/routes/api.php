@@ -25,7 +25,7 @@ use App\Http\Middleware\StudentAuth;
 Route::group(["prefix" => "v0.1"], function () {
 
     Route::controller(UserController::class)->group(function () {
-        Route::post('addUser', 'addUser')->middleware(AdminAuth::class);
+        Route::post('user', 'addUser')->middleware(AdminAuth::class);
         Route::post('login', 'login');
         Route::get('refresh', 'refresh');
         Route::get('students', 'getStudents')->middleware(InstructorAuth::class);
@@ -39,8 +39,8 @@ Route::group(["prefix" => "v0.1"], function () {
 
     Route::controller(AssignementController::class)->group(function () {
         Route::middleware(StudentAuth::class)->group(function () {
-            Route::get('assignements', 'getAssignements');
-            Route::post('assignements', 'addAssignement');
+            Route::get('assignement', 'getAssignements');
+            Route::post('assignement', 'addAssignement');
         });
     });
 
