@@ -26,7 +26,7 @@ class AdminAuth
 
         $decoded = JWT::decode($jwtToken, new Key($key, 'HS256'));
 
-        if ($decoded->role == '1' || $decoded->role == '2' || $decoded->role == '3') {
+        if ($decoded->role == '1') {
             return $next($request);
         } else {
             return response()->json([
