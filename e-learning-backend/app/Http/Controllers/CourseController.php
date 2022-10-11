@@ -16,7 +16,7 @@ class CourseController extends Controller
             $courses = Course::where('instructor_id', $this->me()['id'])->get();
 
             if (Count($courses)) {
-                return response()->json(["assignements" => $courses, "jwt" => $this->refresh(), "success" => true], 200);
+                return response()->json(["courses" => $courses, "jwt" => $this->refresh(), "success" => true], 200);
             } else {
                 return response()->json(["Error" => "Something went wrong."], 400);
             }
@@ -27,7 +27,7 @@ class CourseController extends Controller
                 $result[] = Course::where('_id', $student->course_id)->get();
             }
             if (Count($result)) {
-                return response()->json(["assignements" => $result, "jwt" => $this->refresh(), "success" => true], 200);
+                return response()->json(["courses" => $result, "jwt" => $this->refresh(), "success" => true], 200);
             } else {
                 return response()->json(["Error" => "Something went wrong."], 400);
             }
