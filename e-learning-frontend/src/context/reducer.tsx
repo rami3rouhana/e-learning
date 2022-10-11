@@ -28,6 +28,11 @@ const Reducer = (state: GlobalStateInterface, action: ActionType): any => {
         ...state,
         classes: action.payload,
       };
+    case 'GET_STUDENTS_CLASSES':
+      return {
+        ...state,
+        students: action.payload,
+      };
     case 'GET_ASSIGNEMENTS':
       return {
         ...state,
