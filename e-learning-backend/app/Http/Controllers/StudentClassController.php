@@ -11,6 +11,18 @@ class StudentClassController extends Controller
 {
     public function getStudentsClass($id=null)
     {
+        if ($this->me()['role'] === '3') {
+
+            $studentClasses = StudentClass::where('student_id', $this->me()['id'])->groupby('course_id')->get();
+            $classes = [];
+
+            foreach($studentClasses as $class){
+                $classes = Course::where('_id',$class->course_id)->first();
+            }
+                        
+            return response()->json(["classes" => $classes, "jwt" => $this->refresh()], 200);
+        }
+
         $studentsClass = StudentClass::where('course_id', $id)->get();
 
         $students = [];
