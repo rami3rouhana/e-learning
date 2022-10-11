@@ -5,11 +5,8 @@ import axios from 'axios'
 setupInterceptorsTo(axios);
 
 const intialeState = {
-  axiosData: [],
   error: null,
 }
-
-const base_url = "http://localhost:8000/api/v0.1/";
 
 export interface GlobalStateInterface {
   name: string,
@@ -26,9 +23,9 @@ interface GlobalContext {
   getStudents: () => Promise<void>,
   getCourses: () => Promise<void>,
   getInstructors: () => Promise<void>,
-  getAssignements: () => Promise<void>,
-  getStudentCourses: () => Promise<void>,
-  getAnnouncements: () => Promise<void>,
+  getAssignements: (data:object) => Promise<void>,
+  getStudentsClass: (data:object) => Promise<void>,
+  getAnnouncements: (data:object) => Promise<void>,
   addStudentCourse: (data:object) => Promise<void>,
   addAnouncement: (data:object) => Promise<void>,
   createAssignement: (data:object) => Promise<void>,
@@ -56,18 +53,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
 
 
   const getStudents = async () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.get(base_url + `getStudents`, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.get('getStudents');
       dispatch({
         type: 'GET_STUDENTS',
-        payload: res.data.matches
+        payload: res.data.students
       })
 
     } catch (err: any) {
@@ -79,18 +69,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const getCourses = async () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.get(base_url + `getCourses`, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.get(`getCourses`)
       dispatch({
         type: 'GET_COURSES',
-        payload: res.data.matches
+        payload: res.data.courses
       })
 
     } catch (err: any) {
@@ -102,18 +85,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const getInstructors = async () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.get(base_url + `getInstructors`, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.get(`getInstructors`)
       dispatch({
         type: 'GET_INSTRUCTORS',
-        payload: res.data.matches
+        payload: res.data.instructors
       })
 
     } catch (err: any) {
@@ -124,19 +100,12 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  const getAssignements = async () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
+  const getAssignements = async (data:object) => {
     try {
-      const res = await axios.get(base_url + `getAssignements`, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`getAssignements`,data);
       dispatch({
-        type: 'GET_INSTRUCTORS',
-        payload: res.data.matches
+        type: 'GET_ASSIGNEMENTS',
+        payload: res.data.assignements
       })
 
     } catch (err: any) {
@@ -147,19 +116,13 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  const getStudentCourses = async () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
+  const getStudentsClass = async (data:object) => {
     try {
-      const res = await axios.get(base_url + `getStudentCourses`, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`getStudentsClass`,data)
+      debugger
       dispatch({
         type: 'GET_STUDENTS_COURSES',
-        payload: res.data.matches
+        payload: res.data.students
       })
 
     } catch (err: any) {
@@ -170,19 +133,12 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  const getAnnouncements = async () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
+  const getAnnouncements = async (data:object) => {
     try {
-      const res = await axios.get(base_url + `getAnnouncements`, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`getAnnouncements`,data);
       dispatch({
         type: 'GET_ANNOUNCEMENTS',
-        payload: res.data.matches
+        payload: res.data.announcements
       })
 
     } catch (err: any) {
@@ -194,15 +150,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const addCourse = async (data: object) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.post(base_url + `addCourse`, data, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`addCourse`, data)
       dispatch({
         type: 'ADD_COURSE',
         payload: res.data.matches
@@ -217,15 +166,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const addInstructor = async (data: object) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.post(base_url + `addInstructor`, data, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`addInstructor`, data)
       dispatch({
         type: 'ADD_INSTRUCTOR',
         payload: res.data.matches
@@ -240,15 +182,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const addStudent = async (data: object) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.post(base_url + `addStudent`, data, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`addStudent`, data)
       dispatch({
         type: 'ADD_STUDENT',
         payload: res.data.matches
@@ -263,15 +198,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const createAssignement = async (data: object) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.post(base_url + `createAssignement`, data, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`createAssignement`, data)
       dispatch({
         type: 'CREATE_ASSIGNEMENT',
         payload: res.data.matches
@@ -286,15 +214,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const addAssignement = async (data: object) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.post(base_url + `addAssignement`, data, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`addAssignement`, data)
       dispatch({
         type: 'ADD_ASSIGNEMENT',
         payload: res.data.matches
@@ -309,15 +230,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const addAnouncement = async (data: object) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.post(base_url + `addAnouncement`, data, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`addAnouncement`, data)
       dispatch({
         type: 'ADD_ANOUNCEMENT',
         payload: res.data.matches
@@ -332,15 +246,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const addStudentCourse = async (data: object) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
     try {
-      const res = await axios.post(base_url + `addStudentCourse`, data, config)
-      localStorage.setItem("token", res.data.authorisation.token);
+      const res = await axios.post(`addStudentCourse`, data)
       dispatch({
         type: 'ADD_STUDENTS_COURSE',
         payload: res.data.matches
@@ -362,7 +269,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
       getInstructors,
       getCourses,
       getAssignements,
-      getStudentCourses,
+      getStudentsClass,
       getAnnouncements,
       addStudentCourse,
       addAnouncement,
