@@ -1,22 +1,12 @@
 import { Link } from 'react-router-dom';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { GlobalStateContext } from "../../../context/GlobalState";
 
 
 
 const Header = () => {
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await userInfo.getStudents();
-            debugger
-        }
-        fetchData();
-    })
-
     const userInfo = useContext(GlobalStateContext);
-
-    debugger
 
     return (
         <>
