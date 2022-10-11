@@ -8,6 +8,11 @@ const Reducer = (state: GlobalStateInterface, action: ActionType): any => {
         ...state,
         students: action.payload,
       };
+    case 'LOGIN':
+      return {
+        ...state,
+        user: action.payload,
+      };
     case 'ERROR':
       return {
         ...state,
@@ -41,7 +46,7 @@ const Reducer = (state: GlobalStateInterface, action: ActionType): any => {
     case 'GET_ANNOUNCEMENTS':
       return {
         ...state,
-        anouncements: action.payload,
+        announecements: action.payload,
       };
     case 'ADD_COURSE' || 'ADD_INSTRUCTOR' || 'ADD_STUDENT' || 'CREATE_ASSIGNEMENT' || 'ADD_ASSIGNEMENT' || 'ADD_ANNOUNCEMENT' || 'ADD_STUDENTS_COURSE':
       return {

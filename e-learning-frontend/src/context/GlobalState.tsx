@@ -1,9 +1,9 @@
-import React, { createContext, useState, useReducer, Dispatch, SetStateAction } from "react";
+import React, { createContext, useReducer } from "react";
 import { setupInterceptorsTo } from "../components/Interceptors";
 import Reducer from './reducer'
 import axios from 'axios'
 setupInterceptorsTo(axios);
-
+const user = { name: '', loggedIn: false, role: 0, jwt: '' };
 const intialeState = {
   error: null,
 }
@@ -16,10 +16,19 @@ export interface GlobalStateInterface {
   children?: React.ReactNode
 }
 
+export interface State {
+  announecements: object
+  assignements: object
+  courses: object
+  students: object
+  instructors:object
+}
+
 
 interface GlobalContext {
+  state: State,
   user: GlobalStateInterface,
-  setUser: Dispatch<SetStateAction<GlobalStateInterface>>
+  login: (data: object) => Promise<void>,
   getStudents: () => Promise<void>,
   getCourses: () => Promise<void>,
   getInstructors: () => Promise<void>,
@@ -29,10 +38,8 @@ interface GlobalContext {
   addStudentCourse: (data: object) => Promise<void>,
   addAnouncement: (data: object) => Promise<void>,
   addAssignement: (data: object) => Promise<void>,
-  addStudent: (data: object) => Promise<void>,
-  addInstructor: (data: object) => Promise<void>,
+  addUser: (data: object) => Promise<void>,
   addCourse: (data: object) => Promise<void>,
-  axiosData: (data: object) => Promise<void>
 }
 
 export const GlobalStateContext = createContext({} as GlobalContext)
@@ -44,21 +51,20 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   children: React.ReactNode;
   value?: Partial<GlobalStateInterface>;
 }) => {
-  const [user, setUser] = useState<GlobalStateInterface>({ name: '', loggedIn: false, role: 0, jwt: '' })
 
   const [state, dispatch] = useReducer(Reducer, intialeState)
 
-  console.log(state);
-
-
-  const getStudents = async () => {
+  const login = async (data: object) => {
     try {
-      const res = await axios.get('students');
+      const res = await axios.post('login', data);
+      user.name = res.data.name;
+      user.jwt = res.data.jwt;
+      user.role = res.data.role;
+      user.loggedIn = true;
       dispatch({
-        type: 'GET_STUDENTS',
-        payload: res.data.students
+        type: 'LOGIN',
+        payload: user
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -67,6 +73,22 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  const getStudents = async () => {
+    try {
+      const res = await axios.get('students');
+      dispatch({
+        type: 'GET_STUDENTS',
+        payload: res.data.students
+      })
+    } catch (err: any) {
+      dispatch({
+        type: 'ERROR',
+        payload: err
+      })
+    }
+  }
+
+
   const getCourses = async () => {
     try {
       const res = await axios.get(`courses`)
@@ -74,7 +96,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
         type: 'GET_COURSES',
         payload: res.data.courses
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -85,12 +106,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const getInstructors = async () => {
     try {
-      const res = await axios.get(`instructors`)
+      const res = await axios.get(`instructors`);
       dispatch({
         type: 'GET_INSTRUCTORS',
         payload: res.data.instructors
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -101,12 +121,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const getAssignements = async () => {
     try {
-      const res = await axios.get(`assignements`);
+      const res = await axios.get(`assignement`);
       dispatch({
         type: 'GET_ASSIGNEMENTS',
         payload: res.data.assignements
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -123,7 +142,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
       } else {
         res = await axios.get(`studentsclass/${id}`)
       }
-      if(res.data.classes){
+      if (res.data.classes) {
         dispatch({
           type: 'GET_STUDENTS_COURSES',
           payload: res.data.classes
@@ -149,7 +168,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
         type: 'GET_ANNOUNCEMENTS',
         payload: res.data.announcements
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -160,12 +178,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addCourse = async (data: object) => {
     try {
-      const res = await axios.post(`addCourse`, data)
+      const res = await axios.post(`course`, data)
       dispatch({
         type: 'ADD_COURSE',
         payload: res.data.matches
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -174,30 +191,13 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  const addInstructor = async (data: object) => {
+  const addUser = async (data: object) => {
     try {
-      const res = await axios.post(`addInstructor`, data)
-      dispatch({
-        type: 'ADD_INSTRUCTOR',
-        payload: res.data.matches
-      })
-
-    } catch (err: any) {
-      dispatch({
-        type: 'ERROR',
-        payload: err
-      })
-    }
-  }
-
-  const addStudent = async (data: object) => {
-    try {
-      const res = await axios.post(`addStudent`, data)
+      const res = await axios.post(`user`, data)
       dispatch({
         type: 'ADD_STUDENT',
         payload: res.data.matches
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -205,7 +205,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
       })
     }
   }
-  
+
   const addAssignement = async (data: object) => {
     try {
       const res = await axios.post(`assignement`, data)
@@ -213,7 +213,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
         type: 'ADD_ASSIGNEMENT',
         payload: res.data.matches
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -224,12 +223,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addAnouncement = async (data: object) => {
     try {
-      const res = await axios.post(`anouncement`, data)
+      const res = await axios.post(`announcement`, data)
       dispatch({
         type: 'ADD_ANOUNCEMENT',
         payload: res.data.matches
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -245,7 +243,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
         type: 'ADD_STUDENTS_COURSE',
         payload: res.data.matches
       })
-
     } catch (err: any) {
       dispatch({
         type: 'ERROR',
@@ -257,7 +254,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <GlobalStateContext.Provider value={{
       user,
-      setUser,
+      login,
       getStudents,
       getInstructors,
       getCourses,
@@ -267,10 +264,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
       addStudentCourse,
       addAnouncement,
       addAssignement,
-      addStudent,
-      addInstructor,
+      addUser,
       addCourse,
-      axiosData: state
+      state,
     }}>
       {children}
     </GlobalStateContext.Provider>
