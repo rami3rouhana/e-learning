@@ -28,7 +28,7 @@ class UserController extends Controller
 
             $token = JWT::encode($array, $key, 'HS256');
 
-            return response()->json(["success" => true, "jwt" => $token], 200);
+            return response()->json(["success" => true, "jwt" => $token, "name" => $result->name, "role" => $result->role], 200);
         } else {
             return response()->json(["Error" => "Something went wrong."], 400);
         }
@@ -36,6 +36,7 @@ class UserController extends Controller
     public function addUser(Request $request)
     {
         $result = User::where('email', $request->email)->first();
+
         if ($result) {
             return response()->json(["email" => "Already Taken"], 400);
         }
@@ -43,24 +44,11 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = $request->password;
-        if (isset($request->role))
-            $user->role = 2;
-        else {
-            $user->role = 3;
-        }
+        $user->role = $request->role;
+
         $user->save();
 
-        $array = [
-            'id' => $user->_id,
-            'role' => $result->role,
-            'exp' => time() + 1800
-        ];
-
-        $key = env('JWT_SECRET');
-
-        $token = JWT::encode($array, $key, 'HS256');
-
-        return response()->json(["success" => true, "jwt" => $token], 200);
+        return response()->json(["success" => true, "jwt" => $this->refresh(), "user" => $user], 200);
     }
 
     public function getStudents()
