@@ -39,8 +39,8 @@ class AnnouncementController extends Controller
 
     public function addAnnouncement(Request $request)
     {
-        $announcementExist = Announcement::where('Announcement', $request->Announcement)->first();
-
+        $announcementExist = Announcement::where('announcement', $request->announcement)->first();
+        print_r($announcementExist);
         if ($announcementExist) {
             return response()->json(["announcement" => "Already Taken"], 400);
         }
