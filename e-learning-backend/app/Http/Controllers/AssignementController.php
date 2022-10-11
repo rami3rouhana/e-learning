@@ -77,7 +77,6 @@ class AssignementController extends Controller
 
         $course->assignement = $request->assignement;
         $course->course_id = $request->id;
-        $course->assignement_id = $request->assignement_id;
 
         $course->save();
 
