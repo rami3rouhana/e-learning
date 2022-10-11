@@ -21,36 +21,38 @@ use App\Http\Middleware\StudentAuth;
 |
 */
 
-Route::controller(UserController::class)->group(function () {
-    Route::post('addUser', 'addUser');
-    Route::post('login', 'login');
-    Route::get('refresh', 'refresh');
-    Route::get('me', 'me');
-    Route::get('getStudents', 'getStudents')->middleware(InstructorAuth::class);
-    Route::get('getInstructors', 'getInstructors')->middleware(AdminAuth::class);
-});
 
-Route::controller(CourseController::class)->group(function () {
-    Route::middleware(AdminAuth::class)->group(function () {
-        Route::get('getCourses', 'getCourses')->middleware(StudentAuth::class);
-        Route::post('addCourse', 'addCourse')->middleware(InstructorAuth::class);
+Route::group(["prefix" => "v0.1"], function () {
+
+    Route::controller(UserController::class)->group(function () {
+        Route::post('addUser', 'addUser')->middleware(AdminAuth::class);
+        Route::post('login', 'login');
+        Route::get('refresh', 'refresh');
+        Route::get('students', 'getStudents')->middleware(InstructorAuth::class);
+        Route::get('instructors', 'getInstructors')->middleware(AdminAuth::class);
     });
-});
 
-Route::controller(AssignementController::class)->group(function () {
-    Route::post('getAssignements', 'getAssignements')->middleware(StudentAuth::class);
-    Route::post('addAssignement', 'addAssignement')->middleware(InstructorAuth::class);
-});
+    Route::controller(CourseController::class)->group(function () {
+        Route::get('courses', 'getCourses')->middleware(StudentAuth::class);
+        Route::post('course', 'addCourse')->middleware(InstructorAuth::class);
+    });
 
-Route::controller(AnnouncementController::class)->group(function () {
-    Route::post('getAnnouncements', 'getAnnouncements')->middleware(StudentAuth::class);
-    Route::post('addAnnouncement', 'addAnnouncement')->middleware(InstructorAuth::class);
-});
+    Route::controller(AssignementController::class)->group(function () {
+        Route::middleware(StudentAuth::class)->group(function(){
+            Route::get('assignements', 'getAssignements');
+            Route::post('assignements', 'addAssignement');
+        });
+    });
 
-Route::controller(StudentClassController::class)->group(function () {
-    Route::middleware(AdminAuth::class)->group(function () {
-        Route::post('getStudentsClass', 'getStudentsClass');
-        Route::post('addStudentsClass', 'addStudentsClass');
-        Route::post('getStudentsAssignements', 'getStudentsAssignements');
+    Route::controller(AnnouncementController::class)->group(function () {
+        Route::get('announcement', 'getAnnouncements')->middleware(StudentAuth::class);
+        Route::post('announcement', 'addAnnouncement')->middleware(InstructorAuth::class);
+    });
+
+    Route::controller(StudentClassController::class)->group(function () {
+        Route::middleware(AdminAuth::class)->group(function(){
+            Route::get('studentsclass/{id}', 'getStudentsClass');
+            Route::post('studentsclass', 'addStudentsClass');
+        });
     });
 });
