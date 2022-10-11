@@ -5,16 +5,35 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\Announcement;
+use App\Models\StudentClass;
 
 class AnnouncementController extends Controller
 {
-    public function getAnnouncements(Request $request)
+    public function getAnnouncements()
     {
-        $result = Announcement::where('course_id', $request->id)->get();
-        if (Count($result)) {
-            return response()->json(["announcements" => $result, "jwt" => $this->refresh(), "success" => true], 200);
+        if ($this->me()['role'] === '2') {
+
+            $courses = Course::where('instructor_id', $this->me()['id'])->get();
+            $result = [];
+            foreach ($courses as $course) {
+                $result = Announcement::where('course_id', $course->id)->get();
+            }
+            if (Count($result)) {
+                return response()->json(["assignements" => $result, "jwt" => $this->refresh(), "success" => true], 200);
+            } else {
+                return response()->json(["Error" => "Something went wrong."], 400);
+            }
         } else {
-            return response()->json(["Error" => "Something went wrong."], 400);
+            $students = StudentClass::where('student_id', $this->me()['id'])->groupby('course_id')->get();
+            $result = [];
+            foreach ($students as $student) {
+                $result[] = Announcement::where('course_id', $student->course_id)->get();
+            }
+            if (Count($result)) {
+                return response()->json(["announcements" => $result, "jwt" => $this->refresh(), "success" => true], 200);
+            } else {
+                return response()->json(["Error" => "Something went wrong."], 400);
+            }
         }
     }
 
@@ -25,9 +44,10 @@ class AnnouncementController extends Controller
         if ($announcementExist) {
             return response()->json(["announcement" => "Already Taken"], 400);
         }
-        $courseExist = Course::where('_id', $request->id)->get();
 
-        if (!count($courseExist)) {
+        $courseExist = Course::where('_id', $request->id)->first();
+
+        if (!$courseExist) {
             return response()->json(["course" => 'Does not Exist.'], 400);
         }
 
