@@ -1,14 +1,14 @@
 import Main from './Main';
-import Header from './components/ui/Header' 
+import Header from './components/ui/Header'
 import { GlobalStateProvider } from "./context/GlobalState"
-export default function App() {
 
+export default function App() {
 
   return (
     <>
       <div>
         <GlobalStateProvider>
-          <Header/>
+          <Header />
           <Main />
         </GlobalStateProvider>
       </div>
