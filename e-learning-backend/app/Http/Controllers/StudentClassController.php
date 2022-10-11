@@ -9,9 +9,9 @@ use App\Models\Course;
 
 class StudentClassController extends Controller
 {
-    public function getStudentsClass(Request $request)
+    public function getStudentsClass($id=null)
     {
-        $studentsClass = StudentClass::where('course_id', $request->id)->get();
+        $studentsClass = StudentClass::where('course_id', $id)->get();
 
         $students = [];
 
@@ -35,14 +35,13 @@ class StudentClassController extends Controller
         if (!$course_id) {
             return response()->json(["course" => "Doesn't not exist."], 400);
         }
-        $studentExist = StudentClass::where([['student_id', $request->student_id],['course_id', $request->course_id]])->first();
+        $studentExist = StudentClass::where([['student_id', $request->student_id],['course_id', $request->course_id],['assignement_id']])->first();
         if ($studentExist) {
             return response()->json(["student" => "Already in class."], 400);
         }
         $studentClass = new StudentClass;
         $studentClass->student_id = $request->student_id;
         $studentClass->course_id = $request->course_id;
-
         $studentClass->save();
 
         return response()->json(["id" => $studentClass->id,"jwt"=> $this->refresh(),"success" => true], 200);
