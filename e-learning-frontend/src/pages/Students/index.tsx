@@ -1,4 +1,6 @@
+import StudentCourses from "../../components/ui/StudentCourses";
+
 const Students = () => {
-    return <p>Students</p>;
+    return <StudentCourses/>;
 }
 export default Students;
