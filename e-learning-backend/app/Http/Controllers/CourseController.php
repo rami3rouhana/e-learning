@@ -43,7 +43,7 @@ class CourseController extends Controller
         }
         $instructorExist = User::where([['_id', $request->id], ['role', '2']])->first();
 
-        if ($instructorExist) {
+        if (!$instructorExist) {
             return response()->json(["instructor" => 'Not found'], 400);
         }
 
